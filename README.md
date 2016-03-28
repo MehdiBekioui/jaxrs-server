@@ -114,6 +114,7 @@ public abstract class Token {
 ```
 
 You need to enable security and authorization first (look [Configuration](#configuration)).
+
 Authorization filter needs to deserialize the authorization header in order to update the request security context. You need to define the deserializer in your Spring configuration file.
 
 ```java
@@ -139,6 +140,9 @@ public AuthorizationDeserializer getAuthorizationDeserializer() {
   };
 }
 ```
+
+* This bean is required if authorization is enabled.
+* You can only enable security and use your own authorization filter (do not enable authorization in this case).
 
 ## Configuration
 
