@@ -19,10 +19,12 @@ import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Swagger;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,10 +43,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.bekioui.jaxrs.server.api.ResourceDescriptor;
+import com.bekioui.jaxrs.server.api.descriptor.DeploymentResourceDescriptor;
+import com.bekioui.jaxrs.server.api.descriptor.ResourceDescriptor;
+import com.bekioui.jaxrs.server.api.descriptor.SwaggerResourceDescriptor;
 import com.bekioui.jaxrs.server.api.resource.SwaggerResource;
-import com.bekioui.jaxrs.server.impl.filter.CorsFilterImpl;
-import com.bekioui.jaxrs.server.impl.resource.SwaggerResourceImpl;
+import com.bekioui.jaxrs.server.core.filter.CorsFilterImpl;
+import com.bekioui.jaxrs.server.core.resource.SwaggerResourceImpl;
 import com.excilys.ebi.utils.spring.log.slf4j.InjectLogger;
 
 @Component
@@ -79,7 +83,20 @@ public class NettyServer {
 	private Supplier<CorsFilter> corsFilterSupplier;
 
 	@Autowired
-	private List<ResourceDescriptor> resourceDescriptors;
+	private List<DeploymentResourceDescriptor> deploymentResourceDescriptors;
+
+	@Autowired(required = false)
+	private List<SwaggerResourceDescriptor> swaggerResourceDescriptors;
+
+	private final BiPredicate<Package, Package> packageBiPredicate = (p1, p2) -> p1.equals(p2) || p1.getName().startsWith(p2.getName() + ".");
+
+	private final Function<Object, Stream<Package>> toInterfacePackages = o -> Arrays.asList(o.getClass().getInterfaces()).stream().map(Class::getPackage);
+
+	private final Function<List<? extends ResourceDescriptor>, Predicate<Object>> resourceFilter = descriptors -> //
+	object -> descriptors.stream().map(ResourceDescriptor::getPackage).anyMatch( //
+			pakkage -> packageBiPredicate.test(object.getClass().getPackage(), pakkage) //
+					|| toInterfacePackages.apply(object).anyMatch(ip -> packageBiPredicate.test(ip, pakkage)) //
+	);
 
 	private NettyJaxrsServer server;
 
@@ -108,22 +125,18 @@ public class NettyServer {
 	}
 
 	private void resources(ResteasyDeployment deployment) {
-		BiPredicate<Package, Package> biPredicate = (p1, p2) -> p1.equals(p2) || p1.getName().startsWith(p2.getName() + ".");
-		Function<Object, Stream<Package>> function = o -> Arrays.asList(o.getClass().getInterfaces()).stream().map(Class::getPackage);
-
-		List<Object> resources = applicationContext.getBeansWithAnnotation(Path.class).values().stream() //
-				.filter(o -> resourceDescriptors.stream().map(ResourceDescriptor::getPackage).anyMatch( //
-						p -> biPredicate.test(o.getClass().getPackage(), p) || function.apply(o).anyMatch(ip -> biPredicate.test(ip, p)) //
-				)).collect(Collectors.toList());
+		Collection<Object> resources = applicationContext.getBeansWithAnnotation(Path.class).values();
 
 		if (swaggerEnabled) {
-			Set<Class<?>> classes = resources.stream().map(Object::getClass).collect(Collectors.toSet());
+			List<? extends ResourceDescriptor> resourceDescriptors = swaggerResourceDescriptors != null ? swaggerResourceDescriptors : deploymentResourceDescriptors;
+			Set<Class<?>> classes = resources.stream().filter(resourceFilter.apply(resourceDescriptors)).map(Object::getClass).collect(Collectors.toSet());
 			SwaggerResource swaggerRessource = new SwaggerResourceImpl(swaggerSupplier.get(), classes);
 			deployment.getResources().add(swaggerRessource);
 			deployment.getProviders().add(new SwaggerSerializers());
 		}
 
-		deployment.getResources().addAll(resources);
+		List<Object> deploymentResources = resources.stream().filter(resourceFilter.apply(deploymentResourceDescriptors)).collect(Collectors.toList());
+		deployment.getResources().addAll(deploymentResources);
 	}
 
 	private void providers(ResteasyDeployment deployment) {

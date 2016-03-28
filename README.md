@@ -31,8 +31,31 @@ Add the following to your Spring configuration file:
 @Import({ JaxrsServerConfig.class })
 public class SpringConfig {
 
+  @Bean
+  public DeploymentResourceDescriptor getDeploymentResourceDescriptor() {
+    return () -> MyResource.class.getPackage();
+  }
+
+  @Bean
+  public SwaggerResourceDescriptor getSwaggerResourceDescriptor() {
+    return () -> MyOtherResource.class.getPackage();
+  }
+
 }
 ```
+
+### DeploymentResourceDescriptor
+
+* This bean is required.
+* You can define many descriptors.
+* If you want to deploy all of your resources, return the highest package level.
+
+### SwaggerResourceDescriptor
+
+* This bean is not required.
+* You can define many descriptors.
+* DeploymentResourceDescriptor is used by default if this bean is not defined with swagger enabled.
+* If you want to expose a part of your API, return the selected package.
 
 ## Configure it
 
