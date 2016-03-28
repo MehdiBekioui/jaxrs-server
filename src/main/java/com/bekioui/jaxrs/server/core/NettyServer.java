@@ -34,7 +34,6 @@ import javax.annotation.PreDestroy;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
-import org.jboss.resteasy.plugins.interceptors.CorsFilter;
 import org.jboss.resteasy.plugins.server.netty.NettyJaxrsServer;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.slf4j.Logger;
@@ -46,9 +45,9 @@ import org.springframework.stereotype.Component;
 import com.bekioui.jaxrs.server.api.descriptor.DeploymentResourceDescriptor;
 import com.bekioui.jaxrs.server.api.descriptor.ResourceDescriptor;
 import com.bekioui.jaxrs.server.api.descriptor.SwaggerResourceDescriptor;
-import com.bekioui.jaxrs.server.api.resource.SwaggerResource;
-import com.bekioui.jaxrs.server.core.filter.CorsFilterImpl;
-import com.bekioui.jaxrs.server.core.resource.SwaggerResourceImpl;
+import com.bekioui.jaxrs.server.core.filter.AuthorizationFilter;
+import com.bekioui.jaxrs.server.core.filter.ResteasyCorsFilter;
+import com.bekioui.jaxrs.server.core.resource.SwaggerResource;
 import com.excilys.ebi.utils.spring.log.slf4j.InjectLogger;
 
 @Component
@@ -70,6 +69,12 @@ public class NettyServer {
 	@Value("${jaxrs.server.swagger.enabled:false}")
 	private boolean swaggerEnabled;
 
+	@Value("${jaxrs.server.security.enabled:false}")
+	private boolean securityEnabled;
+
+	@Value("${jaxrs.server.authorization.enabled:false}")
+	private boolean authorizationEnabled;
+
 	@InjectLogger
 	private Logger logger;
 
@@ -78,9 +83,6 @@ public class NettyServer {
 
 	@Autowired
 	private Supplier<Swagger> swaggerSupplier;
-
-	@Autowired
-	private Supplier<CorsFilter> corsFilterSupplier;
 
 	@Autowired
 	private List<DeploymentResourceDescriptor> deploymentResourceDescriptors;
@@ -130,7 +132,7 @@ public class NettyServer {
 		if (swaggerEnabled) {
 			List<? extends ResourceDescriptor> resourceDescriptors = swaggerResourceDescriptors != null ? swaggerResourceDescriptors : deploymentResourceDescriptors;
 			Set<Class<?>> classes = resources.stream().filter(resourceFilter.apply(resourceDescriptors)).map(Object::getClass).collect(Collectors.toSet());
-			SwaggerResource swaggerRessource = new SwaggerResourceImpl(swaggerSupplier.get(), classes);
+			SwaggerResource swaggerRessource = new SwaggerResource(swaggerSupplier.get(), classes);
 			deployment.getResources().add(swaggerRessource);
 			deployment.getProviders().add(new SwaggerSerializers());
 		}
@@ -140,10 +142,19 @@ public class NettyServer {
 	}
 
 	private void providers(ResteasyDeployment deployment) {
-		if (corsEnabled) {
-			deployment.getProviders().add(new CorsFilterImpl(corsFilterSupplier.get()));
+		Collection<Object> providers = applicationContext.getBeansWithAnnotation(Provider.class).values();
+
+		deployment.setSecurityEnabled(securityEnabled);
+
+		if (!authorizationEnabled) {
+			providers.remove(providers.stream().filter(p -> p instanceof AuthorizationFilter).findFirst().get());
 		}
-		deployment.getProviders().addAll(applicationContext.getBeansWithAnnotation(Provider.class).values());
+
+		if (!corsEnabled) {
+			providers.remove(providers.stream().filter(p -> p instanceof ResteasyCorsFilter).findFirst().get());
+		}
+
+		deployment.getProviders().addAll(providers);
 	}
 
 }

@@ -13,10 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bekioui.jaxrs.server.core.supplier;
+package com.bekioui.jaxrs.server.core.filter;
 
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.function.Supplier;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.PreMatching;
+import javax.ws.rs.ext.Provider;
 
 import org.jboss.resteasy.plugins.interceptors.CorsFilter;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +35,10 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Strings;
 
 @Component
-public final class CorsFilterSupplier implements Supplier<CorsFilter> {
+@Provider
+@PreMatching
+@Priority(Priorities.AUTHORIZATION)
+public final class ResteasyCorsFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
 	@Value("${jaxrs.server.cors.allowCredentials:}")
 	private Boolean allowCredentials;
@@ -45,8 +58,11 @@ public final class CorsFilterSupplier implements Supplier<CorsFilter> {
 	@Value("${jaxrs.server.cors.allowedOrigins:}")
 	private String[] allowedOrigins;
 
-	private final Supplier<CorsFilter> supplier = () -> {
-		CorsFilter corsFilter = new CorsFilter();
+	private CorsFilter corsFilter;
+
+	@PostConstruct
+	private void postConstruct() {
+		this.corsFilter = new CorsFilter();
 
 		if (allowCredentials != null) {
 			corsFilter.setAllowCredentials(allowCredentials);
@@ -71,13 +87,16 @@ public final class CorsFilterSupplier implements Supplier<CorsFilter> {
 		if (allowedOrigins.length > 0) {
 			corsFilter.getAllowedOrigins().addAll(Arrays.asList(allowedOrigins));
 		}
-
-		return corsFilter;
-	};
+	}
 
 	@Override
-	public CorsFilter get() {
-		return supplier.get();
+	public void filter(ContainerRequestContext requestContext) throws IOException {
+		corsFilter.filter(requestContext);
+	}
+
+	@Override
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+		corsFilter.filter(requestContext, responseContext);
 	}
 
 }

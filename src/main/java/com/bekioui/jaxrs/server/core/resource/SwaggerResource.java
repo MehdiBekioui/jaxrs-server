@@ -22,22 +22,28 @@ import io.swagger.models.Swagger;
 import java.util.Arrays;
 import java.util.Set;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.bekioui.jaxrs.server.api.resource.SwaggerResource;
+@Path(SwaggerResource.PATH)
+@Produces(MediaType.APPLICATION_JSON)
+public final class SwaggerResource {
 
-public final class SwaggerResourceImpl implements SwaggerResource {
+	static final String PATH = "/swagger-api";
 
 	private Swagger swagger;
 
-	public SwaggerResourceImpl(Swagger swagger, Set<Class<?>> classes) {
+	public SwaggerResource(Swagger swagger, Set<Class<?>> classes) {
 		DefaultReaderConfig defaultReaderConfig = new DefaultReaderConfig();
 		defaultReaderConfig.setScanAllResources(true);
 		defaultReaderConfig.setIgnoredRoutes(Arrays.asList(new String[] { PATH }));
 		this.swagger = new Reader(swagger, defaultReaderConfig).read(classes);
 	}
 
-	@Override
+	@GET
 	public Response get() {
 		return Response.ok().entity(swagger).build();
 	}

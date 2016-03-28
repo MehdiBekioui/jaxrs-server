@@ -13,18 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bekioui.jaxrs.server.api.filter;
+package com.bekioui.jaxrs.server.api.authorization;
 
-import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.container.PreMatching;
-import javax.ws.rs.ext.Provider;
+@FunctionalInterface
+public interface AuthorizationDeserializer {
 
-@Provider
-@PreMatching
-@Priority(Priorities.AUTHORIZATION)
-public interface CorsFilter extends ContainerRequestFilter, ContainerResponseFilter {
+	AuthorizationContext deserialize(String authorization);
 
 }
