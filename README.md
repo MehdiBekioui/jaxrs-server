@@ -28,7 +28,7 @@ Add the following to your Spring configuration file:
 
 ```java
 @Configuration
-@Import({ NettyConfig.class })
+@Import({ JaxrsServerConfig.class })
 public class SpringConfig {
 
 }
@@ -36,33 +36,33 @@ public class SpringConfig {
 
 ## Configure it
 
-| Property                          					   |          								 |
-|----------------------------------------------------------|-----------------------------------------|
-| netty.jaxrs.rootResourcePath     						   |										 |
-| netty.jaxrs.port                 						   | default: 8080                           |
-| netty.jaxrs.maxRequestSize      						   | default: 10 485 760 (1024 * 1024 * 10)  |
-| netty.jaxrs.cors.enabled          					   | default: false                          |
-| netty.jaxrs.cors.allowCredentials						   | 				                         |
-| netty.jaxrs.cors.allowedHeaders  						   |										 |
-| netty.jaxrs.cors.allowedMethods  	   					   |										 |
-| netty.jaxrs.cors.maxAge         						   |										 |
-| netty.jaxrs.cors.exposedHeaders 						   |										 |
-| netty.jaxrs.cors.allowedOrigins   					   | 										 |
-| netty.jaxrs.swagger.enabled          					   | default: false                          |
-| netty.jaxrs.swagger.host								   | default: localhost:8080				 |
-| netty.jaxrs.swagger.info.contact.email 				   |										 |
-| netty.jaxrs.swagger.info.contact.name 				   |										 |
-| netty.jaxrs.swagger.info.contact.url 					   |										 |
-| netty.jaxrs.swagger.info.description 					   |										 |
-| netty.jaxrs.swagger.info.license.name 				   |										 |
-| netty.jaxrs.swagger.info.license.url 					   |										 |
-| netty.jaxrs.swagger.info.license.vendorExtensions.name   |										 |
-| netty.jaxrs.swagger.info.license.vendorExtensions.object |										 |
-| netty.jaxrs.swagger.info.termsOfService 				   |										 |
-| netty.jaxrs.swagger.info.title 						   |										 |
-| netty.jaxrs.swagger.info.vendorExtensions.name 		   |										 |
-| netty.jaxrs.swagger.info.vendorExtensions.object 		   |										 |
-| netty.jaxrs.swagger.info.version 						   |										 |
+| Property                          					       |          								 |
+|--------------------------------------------------------------|-----------------------------------------|
+| jaxrs.server.rootResourcePath     						   |										 |
+| jaxrs.server.port                 						   | default: 8080                           |
+| jaxrs.server.maxRequestSize      						       | default: 10 485 760 (1024 * 1024 * 10)  |
+| jaxrs.server.cors.enabled          					       | default: false                          |
+| jaxrs.server.cors.allowCredentials						   | 				                         |
+| jaxrs.server.cors.allowedHeaders  						   |										 |
+| jaxrs.server.cors.allowedMethods  	   					   |										 |
+| jaxrs.server.cors.maxAge         						       |										 |
+| jaxrs.server.cors.exposedHeaders 						       |										 |
+| jaxrs.server.cors.allowedOrigins   					       | 										 |
+| jaxrs.server.swagger.enabled          					   | default: false                          |
+| jaxrs.server.swagger.host								       | default: localhost:8080				 |
+| jaxrs.server.swagger.info.contact.email 				       |										 |
+| jaxrs.server.swagger.info.contact.name 				       |										 |
+| jaxrs.server.swagger.info.contact.url 					   |										 |
+| jaxrs.server.swagger.info.description 					   |										 |
+| jaxrs.server.swagger.info.license.name 				       |										 |
+| jaxrs.server.swagger.info.license.url 					   |										 |
+| jaxrs.server.swagger.info.license.vendorExtensions.name      |										 |
+| jaxrs.server.swagger.info.license.vendorExtensions.object    |										 |
+| jaxrs.server.swagger.info.termsOfService 				       |										 |
+| jaxrs.server.swagger.info.title 						       |										 |
+| jaxrs.server.swagger.info.vendorExtensions.name 		       |										 |
+| jaxrs.server.swagger.info.vendorExtensions.object 		   |										 |
+| jaxrs.server.swagger.info.version 						   |										 |
 
 ## Credits
 

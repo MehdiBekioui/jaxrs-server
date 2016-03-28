@@ -27,22 +27,22 @@ import com.google.common.base.Strings;
 @Component
 public final class CorsFilterSupplier implements Supplier<CorsFilter> {
 
-	@Value("${netty.jaxrs.cors.allowCredentials:}")
+	@Value("${jaxrs.server.cors.allowCredentials:}")
 	private Boolean allowCredentials;
 
-	@Value("${netty.jaxrs.cors.allowedHeaders:}")
+	@Value("${jaxrs.server.cors.allowedHeaders:}")
 	private String allowedHeaders;
 
-	@Value("${netty.jaxrs.cors.allowedMethods:}")
+	@Value("${jaxrs.server.cors.allowedMethods:}")
 	private String allowedMethods;
 
-	@Value("${netty.jaxrs.cors.maxAge:}")
+	@Value("${jaxrs.server.cors.maxAge:}")
 	private Integer maxAge;
 
-	@Value("${netty.jaxrs.cors.exposedHeaders:}")
+	@Value("${jaxrs.server.cors.exposedHeaders:}")
 	private String exposedHeaders;
 
-	@Value("${netty.jaxrs.cors.allowedOrigins:}")
+	@Value("${jaxrs.server.cors.allowedOrigins:}")
 	private String[] allowedOrigins;
 
 	private final Supplier<CorsFilter> supplier = () -> {

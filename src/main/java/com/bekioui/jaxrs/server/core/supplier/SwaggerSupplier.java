@@ -30,46 +30,46 @@ import org.springframework.stereotype.Component;
 @Component
 public final class SwaggerSupplier implements Supplier<Swagger> {
 
-	@Value("${netty.jaxrs.swagger.host:localhost:8080}")
+	@Value("${jaxrs.server.swagger.host:localhost:8080}")
 	private String host;
 
-	@Value("${netty.jaxrs.swagger.info.contact.email:}")
+	@Value("${jaxrs.server.swagger.info.contact.email:}")
 	private String contactEmail;
 
-	@Value("${netty.jaxrs.swagger.info.contact.name:}")
+	@Value("${jaxrs.server.swagger.info.contact.name:}")
 	private String contactName;
 
-	@Value("${netty.jaxrs.swagger.info.contact.url:}")
+	@Value("${jaxrs.server.swagger.info.contact.url:}")
 	private String contactUrl;
 
-	@Value("${netty.jaxrs.swagger.info.description:}")
+	@Value("${jaxrs.server.swagger.info.description:}")
 	private String description;
 
-	@Value("${netty.jaxrs.swagger.info.license.name:}")
+	@Value("${jaxrs.server.swagger.info.license.name:}")
 	private String licenseName;
 
-	@Value("${netty.jaxrs.swagger.info.license.url:}")
+	@Value("${jaxrs.server.swagger.info.license.url:}")
 	private String licenseUrl;
 
-	@Value("${netty.jaxrs.swagger.info.license.vendorExtensions.name:}")
+	@Value("${jaxrs.server.swagger.info.license.vendorExtensions.name:}")
 	private String licenseVendorExtensionsName;
 
-	@Value("${netty.jaxrs.swagger.info.license.vendorExtensions.object:}")
+	@Value("${jaxrs.server.swagger.info.license.vendorExtensions.object:}")
 	private String licenseVendorExtensionsObject;
 
-	@Value("${netty.jaxrs.swagger.info.termsOfService:}")
+	@Value("${jaxrs.server.swagger.info.termsOfService:}")
 	private String termsOfService;
 
-	@Value("${netty.jaxrs.swagger.info.title:}")
+	@Value("${jaxrs.server.swagger.info.title:}")
 	private String title;
 
-	@Value("${netty.jaxrs.swagger.info.vendorExtensions.name:}")
+	@Value("${jaxrs.server.swagger.info.vendorExtensions.name:}")
 	private String infoVendorExtensionsName;
 
-	@Value("${netty.jaxrs.swagger.info.vendorExtensions.object:}")
+	@Value("${jaxrs.server.swagger.info.vendorExtensions.object:}")
 	private String infoVendorExtensionsObject;
 
-	@Value("${netty.jaxrs.swagger.info.version:}")
+	@Value("${jaxrs.server.swagger.info.version:}")
 	private String version;
 
 	private final Supplier<Swagger> supplier = () -> {

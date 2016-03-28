@@ -24,6 +24,6 @@ import com.excilys.ebi.utils.spring.log.SpringLogConfig;
 @Configuration
 @ComponentScan
 @Import({ SpringLogConfig.class })
-public class NettyConfig {
+public class JaxrsServerConfig {
 
 }

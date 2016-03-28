@@ -50,20 +50,20 @@ import com.excilys.ebi.utils.spring.log.slf4j.InjectLogger;
 @Component
 public class NettyServer {
 
-	@Value("${netty.jaxrs.rootResourcePath:}")
+	@Value("${jaxrs.server.rootResourcePath:}")
 	private String rootResourcePath;
 
-	@Value("${netty.jaxrs.port:8080}")
+	@Value("${jaxrs.server.port:8080}")
 	private int port;
 
 	// Default: 1024 * 1024 * 10
-	@Value("${netty.jaxrs.maxRequestSize:10485760}")
+	@Value("${jaxrs.server.maxRequestSize:10485760}")
 	private int maxRequestSize;
 
-	@Value("${netty.jaxrs.cors.enabled:false}")
+	@Value("${jaxrs.server.cors.enabled:false}")
 	private boolean corsEnabled;
 
-	@Value("${netty.jaxrs.swagger.enabled:false}")
+	@Value("${jaxrs.server.swagger.enabled:false}")
 	private boolean swaggerEnabled;
 
 	@InjectLogger
