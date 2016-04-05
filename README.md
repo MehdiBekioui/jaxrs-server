@@ -9,7 +9,7 @@
 - [Use it](#use-it)
 	- [Default case example](#default-case-example)
 	- [Swagger management example](#swagger-management-example)
-	- [Security management example](#security-management-example)
+	- [Security](#security)
 - [Configuration](#configuration)
 	- [General](#general)
 	- [CORS](#cors)
