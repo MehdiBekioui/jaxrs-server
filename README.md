@@ -31,7 +31,7 @@ Add the following to your Maven configuration:
 <dependency>
 	<groupId>com.bekioui.jaxrs</groupId>
 	<artifactId>jaxrs-server</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 </dependency>
 ```
 
