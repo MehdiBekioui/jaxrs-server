@@ -42,16 +42,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.bekioui.jaxrs.server.api.descriptor.DeploymentResourceDescriptor;
-import com.bekioui.jaxrs.server.api.descriptor.ResourceDescriptor;
-import com.bekioui.jaxrs.server.api.descriptor.SwaggerResourceDescriptor;
-import com.bekioui.jaxrs.server.core.filter.AuthorizationFilter;
-import com.bekioui.jaxrs.server.core.filter.ResteasyCorsFilter;
-import com.bekioui.jaxrs.server.core.resource.SwaggerResource;
+import com.bekioui.jaxrs.security.filter.AuthorizationFilter;
+import com.bekioui.jaxrs.server.descriptor.DeploymentResourceDescriptor;
+import com.bekioui.jaxrs.server.descriptor.ResourceDescriptor;
+import com.bekioui.jaxrs.server.descriptor.SwaggerResourceDescriptor;
+import com.bekioui.jaxrs.server.filter.ResteasyCorsFilter;
+import com.bekioui.jaxrs.server.swagger.SwaggerResource;
 import com.excilys.ebi.utils.spring.log.slf4j.InjectLogger;
 
 @Component
-public class NettyServer {
+public final class NettyServer {
 
 	@Value("${jaxrs.server.rootResourcePath:}")
 	private String rootResourcePath;
@@ -71,9 +71,6 @@ public class NettyServer {
 
 	@Value("${jaxrs.server.security.enabled:false}")
 	private boolean securityEnabled;
-
-	@Value("${jaxrs.server.authorization.enabled:false}")
-	private boolean authorizationEnabled;
 
 	@InjectLogger
 	private Logger logger;
@@ -105,6 +102,7 @@ public class NettyServer {
 	@PostConstruct
 	private void postConstruct() {
 		ResteasyDeployment deployment = new ResteasyDeployment();
+		deployment.setSecurityEnabled(securityEnabled);
 
 		resources(deployment);
 		providers(deployment);
@@ -144,15 +142,12 @@ public class NettyServer {
 	private void providers(ResteasyDeployment deployment) {
 		Collection<Object> providers = applicationContext.getBeansWithAnnotation(Provider.class).values();
 
-		deployment.setSecurityEnabled(securityEnabled);
+		List<Object> toDelete = providers.stream() //
+				.filter(p -> (!corsEnabled && p instanceof ResteasyCorsFilter) //
+						|| (!securityEnabled && p instanceof AuthorizationFilter)) //
+				.collect(Collectors.toList());
 
-		if (!authorizationEnabled) {
-			providers.remove(providers.stream().filter(p -> p instanceof AuthorizationFilter).findFirst().get());
-		}
-
-		if (!corsEnabled) {
-			providers.remove(providers.stream().filter(p -> p instanceof ResteasyCorsFilter).findFirst().get());
-		}
+		providers.removeAll(toDelete);
 
 		deployment.getProviders().addAll(providers);
 	}

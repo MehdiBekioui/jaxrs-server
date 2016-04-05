@@ -21,11 +21,9 @@
 * Expose providers annotated with [Provider](https://docs.oracle.com/javaee/7/api/javax/ws/rs/ext/Provider.html)
 * Enable Cross-Origin Resource sharing
 * Provide [Swagger](http://swagger.io/) resource to the following url http://host**/swagger-api**
-* Enable security
-* Applying javax.annotation.security to JAX-RS resource methods
+* Enable security to use embedded [jaxrs-security](https://github.com/MehdiBekioui/jaxrs-security) library
 
 ## Get it
-> Not yet available
 
 Add the following to your Maven configuration:
 
@@ -78,71 +76,11 @@ public SwaggerResourceDescriptor getSwaggerResourceDescriptor() {
 * **DeploymentResourceDescriptor** is used by default if this bean is not defined with swagger enabled.
 * If you want to expose a part of your API, return the selected package.
 
-#### Security management example
+#### Security
 
-You can apply **javax.annotation.security** to your JAX-RS resource methods like **RolesAllowed**.
+You need to enable security first (look [Configuration](#configuration)).
 
-```java
-@Path("/contracts")
-public interface ContractResource {
-
-  @GET
-  @RolesAllowed("ADMIN")
-  List<String> findAll();
-	
-}
-```
-
-For this example we have a simple token DTO to represent an user.
-
-```java
-@AutoValue
-public abstract class Token {
-
-  @JsonCreator
-  public static Token create(@JsonProperty("name") String name, @JsonProperty("roles") Set<String> roles) {
-    return new AutoValue_Token(name, roles);
-  }
-
-  @JsonProperty("name")
-  public abstract String name();
-
-  @JsonProperty("roles")
-  public abstract Set<String> roles();
-
-}
-```
-
-You need to enable security and authorization first (look [Configuration](#configuration)).
-
-Authorization filter needs to deserialize the authorization header in order to update the request security context. You need to define the deserializer in your Spring configuration file.
-
-```java
-@Bean
-public AuthorizationDeserializer getAuthorizationDeserializer() {
-  return authorization -> {
-    try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      Token token = objectMapper.readValue(authorization, Token.class);
-      return new AuthorizationContext() {
-        @Override
-        public Principal getPrincipal() {
-          return () -> token.name();
-        }
-        @Override
-        public Set<String> getRoles() {
-          return token.roles();
-        }
-      };
-    } catch (IOException e) {
-      return null;
-    }
-  };
-}
-```
-
-* This bean is required if authorization is enabled.
-* You can only enable security and use your own authorization filter (do not enable authorization in this case).
+Look [jaxrs-security](https://github.com/MehdiBekioui/jaxrs-security) library for more informations.
 
 ## Configuration
 
@@ -154,7 +92,6 @@ public AuthorizationDeserializer getAuthorizationDeserializer() {
 | jaxrs.server.port                 						   | default: 8080                           |
 | jaxrs.server.maxRequestSize      						       | default: 10 485 760 (1024 * 1024 * 10)  |
 | jaxrs.server.security.enabled          					   | default: false                          |
-| jaxrs.server.authorization.enabled          				   | default: false                          |
 
 #### CORS
 

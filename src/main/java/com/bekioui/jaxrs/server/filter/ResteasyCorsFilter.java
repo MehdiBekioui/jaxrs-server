@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bekioui.jaxrs.server.core.filter;
+package com.bekioui.jaxrs.server.filter;
 
 import java.io.IOException;
 import java.util.Arrays;

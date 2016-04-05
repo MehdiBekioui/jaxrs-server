@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bekioui.jaxrs.server.api.authorization;
+package com.bekioui.jaxrs.server.descriptor;
 
-import java.security.Principal;
-import java.util.Set;
+@FunctionalInterface
+public interface ResourceDescriptor {
 
-public interface AuthorizationContext {
-
-	Principal getPrincipal();
-
-	Set<String> getRoles();
+	Package getPackage();
 
 }

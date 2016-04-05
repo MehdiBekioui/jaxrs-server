@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bekioui.jaxrs.server.core.supplier;
+package com.bekioui.jaxrs.server.swagger;
 
 import io.swagger.models.Contact;
 import io.swagger.models.Info;

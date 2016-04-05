@@ -19,11 +19,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import com.bekioui.jaxrs.security.JaxrsSecurityConfig;
 import com.excilys.ebi.utils.spring.log.SpringLogConfig;
 
 @Configuration
 @ComponentScan
-@Import({ SpringLogConfig.class })
+@Import({ SpringLogConfig.class, //
+		JaxrsSecurityConfig.class, //
+})
 public class JaxrsServerConfig {
 
 }
